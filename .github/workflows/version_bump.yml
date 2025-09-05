@@ -29,7 +29,7 @@ jobs:
 
       - name: Execute version bump script
         run: |
-          python .github/scripts/version_bump.py
+          python $GITHUB_WORKSPACE/.github/scripts/version_bump.py
 
       - name: Create commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5

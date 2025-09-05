@@ -34,19 +34,20 @@ graph TD
     E -- Produces Outputs --> H[Gradient Logs (model_stats.txt)];
 `
 
-###🧩 Step 1 — Define the Architecture (Net.py)###
+## 🧩 Step 1 — Define the Architecture (Net.py) ##
 
 The FullyConnectedNetworkMod class allows customization of each network layer: number of neurons + activation function.
 
-📥 Input: list of tuples [(Activation, N_neurons), ...]
-📤 Output: PyTorch model (nn.Module) ready for training.
-`# main_script.py
+📥 Input: list of tuples `[(Activation, N_neurons), ...]`
+📤 Output: PyTorch model `(nn.Module)` ready for training.
+`
+\# main_script.py
 from fisiocomPinn.Net import FullyConnectedNetworkMod
 
-# Define architecture: 3 hidden layers
+\# Define architecture: 3 hidden layers
 hidden_config = [("ReLU", 128), ("ReLU", 128), ("Tanh", 64)]
 
-# Problem C from the paper:
+\# Problem C from the paper:
 input_dim = 4   # Input: [t, u0, w0, Iiapp]
 output_dim = 2  # Output: [u(t), w(t)]
 
@@ -58,11 +59,12 @@ my_model = FullyConnectedNetworkMod(
 
 print(my_model)
 `
-🎯 Step 2 — Configure the Trainer (Trainer.py)
+
+# 🎯 Step 2 — Configure the Trainer (Trainer.py) #
 
 The Trainer is the central class. It takes the model, losses, and manages the training process.
 
-🔹 Scenario A: Data-Driven (DDNN / ITNN)
+## 🔹 Scenario A: Data-Driven (DDNN / ITNN) ##
 
 The model learns input → output mappings from numerical solver data.
 
@@ -70,24 +72,24 @@ The model learns input → output mappings from numerical solver data.
 from fisiocomPinn.Loss import MSE
 import torch
 
-# Load data
+\# Load data
 input_data = torch.load("inputs.pt")  # shape [N, 4]
 target_data = torch.load("targets.pt") # shape [N, 2]
 
-# 1. Instantiate Trainer
+\# 1. Instantiate Trainer
 trainer = Trainer(model=my_model, output_folder="results_ddnn")
 
-# 2. Define loss (MSE)
+\# 2. Define loss (MSE)
 loss_mse = MSE(data_in=input_data, target=target_data, batch_size=1024)
 
-# 3. Add loss to Trainer
+\# 3. Add loss to Trainer
 trainer.add_loss(loss_mse, weight=1.0)
 
-# 4. Start training
-# trainer.train(num_iterations=200000)
+\# 4. Start training
+\# trainer.train(num_iterations=200000)
 `
 
-🔹 Scenario B: Physics-Informed (PINN)
+## 🔹 Scenario B: Physics-Informed (PINN) ##
 
 Here, the loss is computed from the ODE residuals (via autograd).
 
@@ -95,13 +97,13 @@ Here, the loss is computed from the ODE residuals (via autograd).
 from fisiocomPinn.Loss_PINN import LOSS_PINN
 import torch
 
-# --- Batch generator ---
+\# --- Batch generator ---
 def batch_generator(batch_size, device):
     t = torch.rand(batch_size, 1, device=device) * 50.0
     t.requires_grad = True
     return t
 
-# --- FitzHugh-Nagumo residual function ---
+\# --- FitzHugh-Nagumo residual function ---
 def fhn_pinn_func(t_batch, model):
     a, b, c, tau, Iiapp = 0.7, 0.8, 1.0, 12.5, 0.5
     uv_pred = model(t_batch)
@@ -115,7 +117,7 @@ def fhn_pinn_func(t_batch, model):
 
     return torch.mean(residual_u**2) + torch.mean(residual_w**2)
 
-# --- Trainer setup ---
+\# --- Trainer setup ---
 trainer_pinn = Trainer(model=my_model, output_folder="results_pinn")
 
 loss_pinn = LOSS_PINN(
@@ -127,10 +129,10 @@ loss_pinn = LOSS_PINN(
 
 trainer_pinn.add_loss(loss_pinn, weight=1.0)
 
-# trainer_pinn.train(num_iterations=200000)
+\# trainer_pinn.train(num_iterations=200000)
 `
 
-📊 Step 3 — Train and Analyze
+# 📊 Step 3 — Train and Analyze #
 
 During training, the following outputs are generated inside output_folder/:
 
@@ -140,20 +142,20 @@ losses.csv → CSV log of loss history (useful for convergence plots).
 
 model_stats.txt → Stats about weights/gradients (useful to diagnose vanishing/exploding gradients).
 
-INFERENCE WITH TRAINED MODEL
+## INFERENCE WITH TRAINED MODEL ##
 `from fisiocomPinn.Net import FullyConnectedNetworkMod
 import torch
 
-# Recreate the same architecture
+\# Recreate the same architecture
 my_model = ...
 
-# Load trained weights
+\# Load trained weights
 my_model.load_state_dict(torch.load("results_ddnn/best_model.pth"))
 my_model.eval()
 
-# Prediction
-# input_tensor = ...
-# predicted_output = my_model(input_tensor)
+\# Prediction
+\# input_tensor = ...
+\# predicted_output = my_model(input_tensor)
 `
 
 

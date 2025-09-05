@@ -16,7 +16,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Permite ler todos os commits
+          path: "./" # Clona o repo diretamente no diretório de trabalho.
+          fetch-depth: 0 # Permite ler todos os commits.
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,7 +31,7 @@ jobs:
 
       - name: Execute version bump script
         run: |
-          python ./.github/scripts/version_bump.py
+          python .github/scripts/version_bump.py
 
       - name: Create commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5

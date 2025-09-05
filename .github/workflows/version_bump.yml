@@ -15,6 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          path: "Pinn-Torch"
           fetch-depth: 0 # Precisamos do histórico de commits para ler a mensagem
 
       - name: Set up Python
@@ -29,7 +30,7 @@ jobs:
 
       - name: Execute version bump script
         run: |
-          python $GITHUB_WORKSPACE/.github/scripts/version_bump.py
+          python Pinn-Torch/.github/scripts/version_bump.py
 
       - name: Create commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5

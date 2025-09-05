@@ -4,19 +4,19 @@ on:
   push:
     branches:
       - main
+      - master
 
 jobs:
   bump_version:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Isso é crucial para que o workflow possa fazer um novo commit.
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          path: "Pinn-Torch"
-          fetch-depth: 0 # Precisamos do histórico de commits para ler a mensagem
+          fetch-depth: 0 # Permite ler todos os commits
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,7 +30,7 @@ jobs:
 
       - name: Execute version bump script
         run: |
-          python Pinn-Torch/.github/scripts/version_bump.py
+          python ./.github/scripts/version_bump.py
 
       - name: Create commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5

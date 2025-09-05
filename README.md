@@ -17,19 +17,24 @@ The system is **modular**: you combine
 
 The **Trainer** orchestrates the entire process of training and output generation.
 
+![DIAGRAM](./mermaid_diagram.png)
 
-    A[Training Data (.npy/.csv)] --> C{Trainer};
-    B[Network Architecture (Net)] --> C;
+```
+flowchart TD
+    A["Training Data (.npy/.csv)"] --> C{Trainer}
+    B["Network Architecture (Net)"] --> C
     subgraph "Loss Functions"
-        D1[Data-Driven Loss (MSE, MAE)]
-        D2[Physics-Informed Loss (PINN)]
+        D1["Data-Driven Loss (MSE, MAE)"]
+        D2["Physics-Informed Loss (PINN)"]
     end
-    D1 --> C;
-    D2 --> C;
-    C -- Starts Training --> E((Execution));
-    E -- Produces Outputs --> F[Loss Logs (losses.csv)];
-    E -- Produces Outputs --> G[Best Model (best_model.pth)];
-    E -- Produces Outputs --> H[Gradient Logs (model_stats.txt)];
+    D1 --> C
+    D2 --> C
+    C -- Starts Training --> E((Execution))
+    E -- Produces Outputs --> F["Loss Logs (losses.csv)"]
+    E -- Produces Outputs --> G["Best Model (best_model.pth)"]
+    E -- Produces Outputs --> H["Gradient Logs (model_stats.txt)"]
+```
+
 
 
 ## 🧩 Step 1 — Define the Architecture (Net.py) ##

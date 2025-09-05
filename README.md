@@ -1,12 +1,11 @@
-
 # Pinn-Torch
 
 This repository contains resources related to the paper:
 
-**Neural Network Models as Surrogates of Classical Ordinary Differential Equations for Reduced-Order Single-Cell Electrophysiology**
-Authors: Yan B. Werneck, Bernardo M. Rocha, Rafael Sachetto Oliveira, Rodrigo W. dos Santos
+**#Neural Network Models as Surrogates of Classical Ordinary Differential Equations for Reduced-Order Single-Cell Electrophysiology**
+>Authors: Yan B. Werneck, Bernardo M. Rocha, Rafael Sachetto Oliveira, Rodrigo W. dos Santos
 Affiliations: Federal University of Juiz de Fora (UFJF), Federal University of São João del-Rei (UFSJ).
-
+(source : https://repositorio.ufjf.br/jspui/handle/ufjf/18126)
 ---
 
 ## 🚀 Workflow
@@ -18,8 +17,7 @@ The system is **modular**: you combine
 
 The **Trainer** orchestrates the entire process of training and output generation.
 
-`
-graph TD
+
     A[Training Data (.npy/.csv)] --> C{Trainer};
     B[Network Architecture (Net)] --> C;
     subgraph "Loss Functions"
@@ -32,22 +30,28 @@ graph TD
     E -- Produces Outputs --> F[Loss Logs (losses.csv)];
     E -- Produces Outputs --> G[Best Model (best_model.pth)];
     E -- Produces Outputs --> H[Gradient Logs (model_stats.txt)];
-`
+
 
 ## 🧩 Step 1 — Define the Architecture (Net.py) ##
 
 The FullyConnectedNetworkMod class allows customization of each network layer: number of neurons + activation function.
 
-📥 Input: list of tuples `[(Activation, N_neurons), ...]`
-📤 Output: PyTorch model `(nn.Module)` ready for training.
-`
-\# main_script.py
+
+| Input         | Output        |
+| ------------- |:-------------:|
+| list of tuples `[(Activation, N_neurons), ...]`  | PyTorch model `(nn.Module)` ready for training.     |
+
+
+```
+#main_script.py
 from fisiocomPinn.Net import FullyConnectedNetworkMod
 
-\# Define architecture: 3 hidden layers
+# Define architecture: 3 hidden layer
+
+
 hidden_config = [("ReLU", 128), ("ReLU", 128), ("Tanh", 64)]
 
-\# Problem C from the paper:
+# Problem C from the paper:
 input_dim = 4   # Input: [t, u0, w0, Iiapp]
 output_dim = 2  # Output: [u(t), w(t)]
 
@@ -58,7 +62,9 @@ my_model = FullyConnectedNetworkMod(
 )
 
 print(my_model)
-`
+
+```
+
 
 # 🎯 Step 2 — Configure the Trainer (Trainer.py) #
 
@@ -68,7 +74,8 @@ The Trainer is the central class. It takes the model, losses, and manages the tr
 
 The model learns input → output mappings from numerical solver data.
 
-`from fisiocomPinn.Trainer import Trainer
+```python
+from fisiocomPinn.Trainer import Trainer
 from fisiocomPinn.Loss import MSE
 import torch
 
@@ -87,13 +94,13 @@ trainer.add_loss(loss_mse, weight=1.0)
 
 \# 4. Start training
 \# trainer.train(num_iterations=200000)
-`
+```
 
 ## 🔹 Scenario B: Physics-Informed (PINN) ##
 
 Here, the loss is computed from the ODE residuals (via autograd).
 
-`from fisiocomPinn.Trainer import Trainer
+```from fisiocomPinn.Trainer import Trainer
 from fisiocomPinn.Loss_PINN import LOSS_PINN
 import torch
 
@@ -130,20 +137,22 @@ loss_pinn = LOSS_PINN(
 trainer_pinn.add_loss(loss_pinn, weight=1.0)
 
 \# trainer_pinn.train(num_iterations=200000)
-`
+```
 
 # 📊 Step 3 — Train and Analyze #
 
 During training, the following outputs are generated inside output_folder/:
 
-best_model.pth → Model weights with lowest validation error.
+|Output       |Explanation       |
+| ------------- |:-------------:|
+| best_model.pth   →    | Model weights with lowest validation error      |
+| losses.csv → | CSV log of loss history (useful for convergence plots).|
+|model_stats.txt  → | Stats about weights/gradients (useful to diagnose vanishing/exploding gradients).|
 
-losses.csv → CSV log of loss history (useful for convergence plots).
 
-model_stats.txt → Stats about weights/gradients (useful to diagnose vanishing/exploding gradients).
-
-## INFERENCE WITH TRAINED MODEL ##
-`from fisiocomPinn.Net import FullyConnectedNetworkMod
+## Inference with Trained Model ##
+```python
+from fisiocomPinn.Net import FullyConnectedNetworkMod
 import torch
 
 \# Recreate the same architecture
@@ -156,18 +165,10 @@ my_model.eval()
 \# Prediction
 \# input_tensor = ...
 \# predicted_output = my_model(input_tensor)
-`
+```
 
 
-
-
-
-
-
-
-
-
-## 📖 Abstract
+<!-- ## 📖 Abstract
 
 Electrophysiology modeling plays a crucial role in non-invasive diagnostics and in advancing our understanding of cardiac and brain function. Traditional methods rely on solving systems of **ordinary differential equations (ODEs)**, which are computationally expensive.
 
@@ -214,7 +215,7 @@ With **TensorRT optimization**, surrogates achieve up to **1.8× speedup** compa
 - **Real-time simulations** for clinical decision support.
 - **Differentiable AI pipelines** for scientific computing.
 
----
+--- -->
 
 
 ## Citation

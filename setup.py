@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="fisiocomPinn",  # Name that will be used to install (pip install my_library)
-    version="0.2.1",  # Version
+    version="0.2.2",  # Version
     packages=find_packages(),  # Automatically find your folders/modules
     install_requires=[
         "torch>=2.0.0",

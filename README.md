@@ -42,7 +42,7 @@ The FullyConnectedNetworkMod class allows customization of each network layer: n
 | list of tuples `[(Activation, N_neurons), ...]`  | PyTorch model `(nn.Module)` ready for training.     |
 
 
-```
+```python
 #main_script.py
 from fisiocomPinn.Net import FullyConnectedNetworkMod
 
@@ -100,7 +100,8 @@ trainer.train(num_iterations=200000)
 
 Here, the loss is computed from the ODE residuals (via autograd).
 
-```from fisiocomPinn.Trainer import Trainer
+```python
+from fisiocomPinn.Trainer import Trainer
 from fisiocomPinn.Loss_PINN import LOSS_PINN
 import torch
 

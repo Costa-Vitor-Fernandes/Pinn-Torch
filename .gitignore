@@ -2,4 +2,4 @@ trainer/*
 training_data/*
 __pycache__/*
 .vs/*
-.egg-info/*
+*.egg-info/
